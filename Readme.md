@@ -1,0 +1,1 @@
+Create the object hosue and inoput the the variables A B D F G 
