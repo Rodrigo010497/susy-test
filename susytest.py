@@ -18,7 +18,6 @@ class House:
         self.potential_scores_per_month = {date: self.calculate_potential_score(date) for date in self.months}
         self.effective_scores_per_month = {date: self.calculate_effective_score(date) for date in self.months}
 
-
     #calculate potential score
     def calculate_potential_score(self, date):
         score = ( (self.potential_energy_generation[date] + self.potential_savings_on_improvements[date]) - self.energy_usage[date] )
@@ -30,17 +29,6 @@ class House:
         score = ( (self.effective_energy_generation[date] + self.effective_energy_generation[date]) - self.energy_usage[date])
         print(date,"effective score",score)
         return score
-    
-    # @property
-    # #get potential score
-    # def potential_score(self):
-    #     return self.potential_score
-
-    # @property
-    # #get effective score
-    # def effective_score(self): 
-    #     return self.effective_score
-    
 
     #save potential score to database
     def save_potential_score(self, conn, cursor, date):
@@ -84,28 +72,14 @@ def close_db_connection(conn, cursor):
 
 #I could have done this inside the class but I didn't to ensure loose coupling     
 # Get house data per month from db
-
 def get_houses_data_from_db(cursor, first_month_date, last_month_date):
     cursor.execute(f"SELECT * FROM houses WHERE date BETWEEN '{first_month_date}' AND '{last_month_date}'")  #Adjust table name as needed
     rows = cursor.fetchall()
     variables_names = ["A","B","C","D","E","F","G","H"]
+    #organize data by variable per date
     data_per_month = { name: { str(row["date"]) : row[name] for row in rows } for name in variables_names }
 
-    # Print the data from the table
-    for row in rows:
-        print(row)
-
     return data_per_month 
-
-
-    # Step 2: Writing (Inserting) Data into an Existing Table
-    cursor.execute('''
-        INSERT INTO users (name, age) 
-        VALUES (%s, %s)
-    ''', ('John Doe', 35))  # The %s are placeholders for the actual values
-    conn.commit()  # Commit the transaction
-
-    # print("Data inserted successfully!")
 
 os.environ["DB_HOST"] = "127.0.0.1"
 os.environ["DB_USER"] = "root"
